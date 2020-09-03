@@ -1,0 +1,19 @@
+<settings>
+    <setting id="ExcludeHTTP" value="true" />
+    <setting id="ExcludeLiveTV" value="true" />
+    <setting id="ExcludePath" value="/mnt/torrents/" />
+    <setting id="ExcludePath2" value="" />
+    <setting id="ExcludePath3" value="" />
+    <setting id="ExcludePath4" value="" />
+    <setting id="ExcludePath5" value="" />
+    <setting id="ExcludePathOption" value="true" />
+    <setting id="ExcludePathOption2" value="false" />
+    <setting id="ExcludePathOption3" value="false" />
+    <setting id="ExcludePathOption4" value="false" />
+    <setting id="ExcludePathOption5" value="false" />
+    <setting id="ExcludeTime" value="15" />
+    <setting id="check_for_specific" value="false" />
+    <setting id="debug" value="false" />
+    <setting id="ignore_words" value="theme" />
+    <setting id="selected_language" value="English" />
+</settings>

@@ -1,0 +1,73 @@
+#!/bin/bash
+
+HTTP_DESTDIR=/srv/http
+TFTP_DESTDIR=/srv/atftp
+
+_opt_ipxe=0
+_opt_boot=0
+_opt_sfs=0
+
+case "$1" in
+  all)
+    _opt_ipxe=1
+    _opt_boot=1
+    _opt_sfs=1
+    ;;
+  ipxe)
+    _opt_ipxe=1
+    ;;
+  boot)
+    _opt_boot=1
+    ;;
+  sfs)
+    _opt_sfs=1
+    ;;
+  *)
+    echo "Usage $0 [all|ipxe|boot|sfs]"
+    echo "  Publish to $HTTP_DESTDIR and $TFTP_DESTDIR"
+    echo "  all  : Publish all below targets"
+    echo "  ipxe : Publish ipxe files from ipxe"
+    echo "  boot : Publish boot files (kernel+initramfs) from sfsroot.change"
+    echo "  sfs  : Publish squashfs file from sfsroot.change"
+    exit 0
+    ;;
+esac
+
+if (( _opt_ipxe )); then
+  echo "Build ipxe"
+  ipxe/build.sh
+  echo "Done"
+  echo "Copying over ipxe bootfiles"
+  cp -f ipxe/ipxe.c32 $TFTP_DESTDIR/
+  cp -f ipxe/ipxe.efi $TFTP_DESTDIR/
+  echo "Done"
+fi
+
+if (( _opt_boot )); then
+  echo "Copy over kernel+initramfs"
+  ./sfsroot.change.mount
+  set -m
+  arch-chroot sfsroot.mount mkinitcpio -p sfsroot
+  wait
+  cp -f sfsroot.mount/boot/vmlinuz-linux $HTTP_DESTDIR/sfsroot-vmlinuz
+  cp -f sfsroot.mount/boot/initramfs-sfsroot.img $HTTP_DESTDIR/sfsroot-initramfs
+  ./sfsroot.change.umount
+  echo "Done"
+fi
+
+#echo "bulding initramfs"
+#cp -f sfsroot/hooks/* $MKINITCPIO_HOOKS_DIR/hooks/
+#cp -f sfsroot/install/* $MKINITCPIO_HOOKS_DIR/install/
+#SFS_KERNEL_VER=$(file -bL arch/boot/vmlinuz-linux | grep -o 'version [^ ]*' | cut -d ' ' -f 2)
+#mkinitcpio -c sfsroot/mkinitcpio-sfsroot.conf -g $HTTP_DESTDIR/sfsroot-initramfs.img -r arch/usr -k $SFS_KERNEL_VER
+
+if (( _opt_sfs )); then
+  echo "building squashfs"
+  ./sfsroot.change.mount
+  [ -f $HTTP_DESTDIR/sfsroot.sfs ] && echo "Backing up sfsroot.sfs -> .bak" && mv $HTTP_DESTDIR/sfsroot.sfs $HTTP_DESTDIR/sfsroot.sfs.bak
+  #mksquashfs sfsroot.mount/ $HTTP_DESTDIR/sfsroot.sfs -noappend -no-exports -progress -e boot -e var/cache
+  mksquashfs sfsroot.mount/ $HTTP_DESTDIR/sfsroot.sfs -comp lz4 -Xhc -noappend -no-exports -progress -e boot -e var/cache
+  ./sfsroot.change.umount
+  echo "Done"
+fi
+

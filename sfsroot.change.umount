@@ -1,0 +1,3 @@
+#!/bin/bash
+mountpoint -q sfsroot.mount && umount sfsroot.mount
+rm -rf sfsroot.work sfsroot.mount

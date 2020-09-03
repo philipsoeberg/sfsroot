@@ -1,0 +1,38 @@
+#!/bin/sh
+
+msg() {
+  echo "SFSROOT:" "$*"
+}
+
+drop_to_shell() {
+  msg "SFSROOT: Break to shell in sfsroot_shutdown"
+  sh
+}
+
+
+msg "Enter shutdown handler"
+
+# Fetch sfsserver from cmdline
+sfsserver=$(cat /proc/cmdline)
+sfsserver="${sfsserver##*sfsserver=}"
+sfsserver="${sfsserver%% *}"
+hostname=$(uname -n)
+
+msg "move /oldroot/dev/sfsroot -> /sfsroot"
+mkdir /sfsroot
+mount -n --move /oldroot/dev/sfsroot /sfsroot
+
+msg "Unmount all of /oldroot (including all submounts)"
+umount $(mount | awk '$3 ~/^\/oldroot/ {print $3}' | sort -r)
+
+msg "Running rsync of /sfsroot/sync/ -> rsync://${sfsserver}/ftp/sfsroot.sync.${hostname}/"
+rsync -az --xattrs --devices --specials --delete --out-format="%i %7'''b %n%L" --exclude-from /sfsroot_shutdown.rsync.exclude --delete-excluded /sfsroot/sync/ rsync://${sfsserver}/ftp/sfsroot.sync.${hostname}/
+
+# No need to umount anything else. All is in ram anyway
+
+msg "All done. Continuing $1"
+case "$1" in
+  reboot|poweroff|halt) "$1" -f ;;
+  *) msg "Unknown operation $1 requested. Forcing reboot -f"; reboot -f ;;
+esac
+

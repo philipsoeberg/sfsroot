@@ -1,0 +1,80 @@
+#!/bin/bash
+
+msg() {
+  echo "SFSROOT:" "$*"
+}
+
+
+./sfsroot.change.umount
+set -e
+
+#bootstrap base
+[ -d sfsroot.base ] && msg "sfsroot.base exist. Cannot bootstrap" && exit 0
+
+#add necessary packages to host
+packages=(squashfs-tools arch-install-scripts)
+if ! pacman -Qe ${packages[*]} > /dev/null 2>&1; then
+  msg "Missing packages from host. Adding them.."
+  pacman --noconfirm -Sy --needed ${packages[*]}
+fi
+
+msg "Bootstrapping sfsroot.base.."
+mkdir sfsroot.base
+pacstrap -c sfsroot.base base linux linux-firmware dhcpcd mkinitcpio-nfs-utils openssh vim rsync curl wget smbclient kodi polkit xf86-video-intel mesa-libgl libva-intel-driver libva mesa xorg-xinit xorg-server  xf86-video-vmware kodi unrar unzip libcec openresolv upower udisks2 sudo
+rm sfsroot.base/boot/*.img 
+
+# Configure and enable default services
+msg "Enter overlay mount for config and enable of default services"
+./sfsroot.change.mount
+msg "Copy flat files"
+cp -axfv sfsroot.base.bootstrap.d/* sfsroot.mount/
+msg "Entering chroot"
+arch-chroot sfsroot.mount/ /bin/bash -e <<-EOF
+
+	echo ":: Setup locale.conf, locale.gen and vconsole.conf"
+	echo "LANG=en_DK.UTF-8" >> /etc/locale.conf
+	echo "en_DK.UTF-8 UTF-8" > /etc/locale.gen
+	echo "KEYMAP=dk" > /etc/vconsole.conf
+	locale-gen
+
+	echo ":: Setting localtime timezone to Europa/Copenhagen"
+	ln -sf /usr/share/zoneinfo/Europe/Copenhagen /etc/localtime
+
+	echo ":: Adding colorls and nohistfile to profile.d"
+	echo "alias ls='ls --color=auto'" > /etc/profile.d/colorls.sh
+	echo "alias ll='ls -la'" >> /etc/profile.d/colorls.sh
+	echo "unset HISTFILE" > /etc/profile.d/nohistfile.sh
+
+	echo ":: Configuring journald and systemd"
+	sed -e "/#Storage/aStorage=volatile" -i /etc/systemd/journald.conf
+	sed -e "/#RuntimeWatchdogSec/aRuntimeWatchdogSec=3min" -i /etc/systemd/system.conf
+	sed -e "/#CapabilityBoundingSet/aCapabilityBoundingSet=~CAP_AUDIT_CONTROL" -i /etc/systemd/system.conf
+
+	echo ":: Enabling system services"
+	systemctl enable dhcpcd@eth0 systemd-timesyncd sshd
+
+	echo ":: Masking system services"
+	systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+
+	echo ":: Adding kodi user with homedir in /kodi"
+	mkdir -p /kodi
+	groupadd -g 420 kodi
+	useradd -c 'kodi user' -u 420 -g kodi -G audio,video,network,optical,uucp -d /kodi -s /usr/bin/nologin kodi
+	passwd -l kodi
+	chown -R kodi:kodi /kodi
+
+	echo ":: Enabling kodi service"
+	systemctl enable kodi
+	pacman --noconfirm -U /kodi-addon-vfs-rar*
+        rm /kodi-addon-vfs-rar*
+
+        echo ":: Enabling D2 LED service"
+        systemctl enable d2-led
+
+	echo ":: Done. Leaving chroot"
+EOF
+msg "Done. Leaving overlay mount"
+./sfsroot.change.umount
+
+msg "All Done"
+

@@ -1,0 +1,75 @@
+#!/bin/bash
+
+drop_to_shell() {
+  echo "SFSROOT: Drop to shell.."
+  launch_interactive_shell
+}
+
+run_or_reboot() {
+  if ! "$@"; then
+    err "SFSROOT: Failed to run" "$*" ". Rebooting in 10 seconds.."
+    sleep 10
+    reboot -f
+  fi
+}
+
+run_hook() {
+
+  dir_sfsroot=/dev/sfsroot
+  dir_base=$dir_sfsroot/base
+  dir_sync=$dir_sfsroot/sync
+  dir_work=$dir_sfsroot/work
+
+  msg "SFSROOT: Running ipconfig"
+  run_or_reboot ipconfig "ip=${ip}"
+  msg "SFSROOT: Setting hostname var"
+  hostname=$(uname -n)
+  msg "SFSROOT: Loading modules"
+  run_or_reboot modprobe loop
+  run_or_reboot modprobe squashfs
+  run_or_reboot modprobe overlay
+  msg "SFSROOT: mkdir sfsroot"
+  run_or_reboot mkdir $dir_sfsroot
+  msg "SFSROOT: Mount tmpfs as /sfsroot"
+  run_or_reboot mount -w -t tmpfs tmpfs -o size=50% $dir_sfsroot
+  msg "SFSROOT: mkdir sfsroot/{base,sync,work,mount}"
+  run_or_reboot mkdir -p $dir_base $dir_sync $dir_work
+  msg "SFSROOT: Fetching http://${sfsserver}/sfsroot.sfs to /sfsroot/sfsroot.sfs"
+  run_or_reboot curl -L http://${sfsserver}/sfsroot.sfs -o $dir_sfsroot/sfsroot.sfs
+  #run_or_reboot wget -P $dir_sfsroot -c http://${sfsserver}/sfsroot.sfs
+  msg "SFSROOT: Mounting squashfs on loop at /sfsroot/base"
+  run_or_reboot mount -r -t squashfs -o loop $dir_sfsroot/sfsroot.sfs $dir_base
+  msg "SFSROOT: rsync changes from rsync://${sfsserver}/ftp/sfsroot.sync.${hostname}/ -> $dir_sync/"
+  # test presence of rsync dir (may not exist before first shutdown of new client)
+  if ! rsync -q rsync://${sfsserver}/ftp/sfsroot.sync.${hostname}/ 2>/dev/null; then
+    echo "SFSROOT: !! NOTICE !! No sync files found in rsync://${sfsserver}/ftp/sfsroot.sync.${hostname}/. Assuming first-run. Continuing.."
+  else
+    run_or_reboot rsync -az --xattrs --devices --specials rsync://${sfsserver}/ftp/sfsroot.sync.${hostname}/ $dir_sync/
+  fi
+  msg "SFSROOT: All init done"
+
+  root=""
+  rootfstype=""
+  rootdelay=0
+  mount_handler="sfsroot_mount_handler"
+}
+
+sfsroot_mount_handler() {
+  msg "SFSROOT: Mounting $1 via overlayfs mount"
+  run_or_reboot mount -w -t overlay overlay -o lowerdir=$dir_base,upperdir=$dir_sync,workdir=$dir_work "$1"
+  msg "SFSROOT: All done"
+}
+
+#
+# Install shutdown initramfs by copying all of boot initramfs to /run/initramfs and add special file /run/initramfs/shutdown as executable
+# This cause systemd to pivot_root to /run/initramfs and execute our shutdown script.
+#
+run_cleanuphook() {
+  msg "SFSROOT: Copy / -> /run/initramfs"
+  # No need for kernel modules at shutdown
+  rm -rf /usr/lib/modules
+  # Copy entire initramfs to /run/initramfs (including our own shutdown script). Stay on current filesystem
+  cp -ax / /run/initramfs
+  # Remove systemd daemons. No longer needed
+  rm -rf /run/initramfs/usr/lib/systemd
+}

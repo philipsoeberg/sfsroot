@@ -1,0 +1,17 @@
+#!ipxe
+
+# boots via http from next-server
+# Set linux kernel arguments via dhcp server's root-path option
+
+:retry_dhcp
+dhcp && isset ${filename} || goto retry_dhcp
+echo IPXE: Fetching vmlinuz and initrd.img from [${next-server}]
+
+#set args net.ifnames=0 ip=:::::eth0:dhcp initrd=sfsroot-initramfs sfsserver=${next-server} console=tty0 console=ttyS0,115200 ${root-path}
+set args net.ifnames=0 ip=:::::eth0:dhcp initrd=sfsroot-initramfs sfsserver=${next-server} ${root-path}
+
+echo IPXE: Setting arguments [${args}]
+kernel --timeout 10000 http://${next-server}/sfsroot-vmlinuz ${args} || goto retry_dhcp
+initrd --timeout 10000 http://${next-server}/sfsroot-initramfs || goto retry_dhcp
+echo IPXE: Booting kernel
+boot

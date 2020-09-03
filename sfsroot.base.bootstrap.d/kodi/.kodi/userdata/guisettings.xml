@@ -1,0 +1,25 @@
+<settings version="2">
+    <setting id="locale.country">Central Europe</setting>
+    <setting id="locale.timezone">Europe/Copenhagen</setting>
+    <setting id="locale.timezonecountry">Denmark</setting>
+    <setting id="locale.use24hourclock" default="true">regional</setting>
+    <setting id="lookandfeel.enablerssfeeds" default="true">false</setting>
+    <setting id="scrapers.moviesdefault" default="true">metadata.themoviedb.org</setting>
+    <setting id="scrapers.tvshowsdefault" default="true">metadata.tvshows.themoviedb.org</setting>
+    <setting id="services.webserver">true</setting>
+    <setting id="services.webserverpassword">kodi</setting>
+    <setting id="services.webserverport" default="true">8080</setting>
+    <setting id="services.webserverssl" default="true">false</setting>
+    <setting id="services.webserverusername" default="true">kodi</setting>
+    <setting id="services.webskin" default="true">webinterface.default</setting>
+    <setting id="subtitles.downloadfirst">true</setting>
+    <setting id="subtitles.languages" default="true">English</setting>
+    <setting id="subtitles.movie">service.subtitles.opensubtitles</setting>
+    <setting id="subtitles.pauseonsearch" default="true">true</setting>
+    <setting id="subtitles.tv">service.subtitles.opensubtitles</setting>
+    <setting id="weather.addon">weather.yahoo</setting>
+    <setting id="weather.currentlocation" default="true">1</setting>
+    <general>
+        <settinglevel>3</settinglevel>
+    </general>
+</settings>

@@ -1,0 +1,10 @@
+[Unit]
+Description=Run D2 LED setup
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/d2-led.sh
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target

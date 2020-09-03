@@ -1,0 +1,26 @@
+<advancedsettings>
+ <pathsubstitution>
+  <substitute>
+    <from>special://profile/Thumbnails/</from>
+    <to>/mnt/data/Backup-NoCloud/thumbcache</to>
+  </substitute>
+ </pathsubstitution>
+ <videodatabase>
+    <type>mysql</type>
+    <host>192.168.1.3</host>
+    <port>3306</port>
+    <user>kodi</user>
+    <pass>kodi</pass>
+ </videodatabase> 
+ <musicdatabase>
+    <type>mysql</type>
+    <host>192.168.1.3</host>
+    <port>3306</port>
+    <user>kodi</user>
+    <pass>kodi</pass>
+ </musicdatabase>
+ <videolibrary>
+    <importwatchedstate>true</importwatchedstate>
+    <importresumepoint>true</importresumepoint>
+ </videolibrary>
+</advancedsettings>

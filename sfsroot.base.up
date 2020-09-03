@@ -1,0 +1,11 @@
+#!/bin/bash
+set -m
+./sfsroot.change.umount
+mount --bind sfsroot.base sfsroot.base
+arch-chroot sfsroot.base pacman -Syu
+wait
+yes | arch-chroot sfsroot.base pacman -Scc
+wait
+umount sfsroot.base
+rm -vf sfsroot.base/boot/*.img
+echo "Client upgrade script complete. Remember to publish if you upgraded"

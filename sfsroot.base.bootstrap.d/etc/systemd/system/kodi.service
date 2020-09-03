@@ -1,0 +1,19 @@
+[Unit]
+Description = Kodi
+After = systemd-user-sessions.service network.target sound.target mysqld.service mount-persistency.service polkit.service
+Conflicts=getty@tty7.service
+
+[Service]
+User = kodi
+Group = kodi
+PAMName=login
+Type = simple
+TTYPath=/dev/tty7
+ExecStart = /usr/bin/xinit /usr/bin/dbus-launch --exit-with-session /usr/bin/kodi-standalone -- :0 -nolisten tcp vt7
+Restart = always
+RestartSec = 1s
+StandardInput = tty
+
+[Install]
+WantedBy = multi-user.target
+

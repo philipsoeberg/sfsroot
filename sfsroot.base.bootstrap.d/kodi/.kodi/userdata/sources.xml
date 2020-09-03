@@ -1,0 +1,47 @@
+<sources>
+    <programs>
+        <default pathversion="1"></default>
+    </programs>
+    <video>
+        <default pathversion="1"></default>
+        <source>
+            <name>Movies</name>
+            <path pathversion="1">/mnt/data/Movies/</path>
+            <allowsharing>true</allowsharing>
+        </source>
+        <source>
+            <name>Cartoons</name>
+            <path pathversion="1">/mnt/data/Cartoons/</path>
+            <allowsharing>true</allowsharing>
+        </source>
+        <source>
+            <name>Documentaries</name>
+            <path pathversion="1">/mnt/data/Documentaries/</path>
+            <allowsharing>true</allowsharing>
+        </source>
+        <source>
+            <name>Music Videos</name>
+            <path pathversion="1">/mnt/data/Music Videos/</path>
+            <allowsharing>true</allowsharing>
+        </source>
+        <source>
+            <name>Series</name>
+            <path pathversion="1">/mnt/data/Series/</path>
+            <allowsharing>true</allowsharing>
+        </source>
+        <source>
+            <name>Torrents</name>
+            <path pathversion="1">/mnt/torrents/</path>
+            <allowsharing>true</allowsharing>
+        </source>
+    </video>
+    <music>
+        <default pathversion="1"></default>
+    </music>
+    <pictures>
+        <default pathversion="1"></default>
+    </pictures>
+    <files>
+        <default pathversion="1"></default>
+    </files>
+</sources>

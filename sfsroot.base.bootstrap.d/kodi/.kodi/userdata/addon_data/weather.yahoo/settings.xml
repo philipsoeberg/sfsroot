@@ -1,0 +1,12 @@
+<settings>
+    <setting id="Location1" value="Hornbaek (Hovedstaden - DK)" />
+    <setting id="Location1id" value="554890" />
+    <setting id="Location2" value="New York (US)" />
+    <setting id="Location2id" value="2459115" />
+    <setting id="Location3" value="San Francisco (US)" />
+    <setting id="Location3id" value="2487956" />
+    <setting id="Location4" value="London (GB)" />
+    <setting id="Location4id" value="44418" />
+    <setting id="Location5" value="Tokyo (JP)" />
+    <setting id="Location5id" value="1118370" />
+</settings>

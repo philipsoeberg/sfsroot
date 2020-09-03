@@ -1,0 +1,4 @@
+
+//192.168.1.2/data /mnt/data cifs noauto,nofail,noperm,file_mode=0644,vers=3.0,x-systemd.automount,x-systemd.requires=network-online.target,x-systemd.device-timeout=5sec,x-systemd.idle-timeout=10min,username=kodi,password=kodi 0 0
+
+//192.168.1.2/torrents /mnt/torrents cifs noauto,nofail,noperm,file_mode=0644,vers=3.0,x-systemd.automount,x-systemd.requires=network-online.target,x-systemd.device-timeout=5sec,x-systemd.idle-timeout=10min,username=kodi,password=kodi 0 0

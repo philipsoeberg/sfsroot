@@ -1,0 +1,6 @@
+#!/bin/bash
+./sfsroot.change.mount
+set -m
+arch-chroot sfsroot.mount /bin/bash --rcfile <(echo "source /etc/profile; PS1='[sfsroot \w] ';unset HISTFILE") -i
+wait
+./sfsroot.change.umount

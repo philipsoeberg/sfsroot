@@ -1,0 +1,9 @@
+# mkinitcpio preset file for the 'linux' package
+
+ALL_config="/etc/mkinitcpio.conf"
+ALL_kver="/boot/vmlinuz-linux"
+
+PRESETS=('sfsroot')
+
+sfsroot_config="/etc/initcpio/mkinitcpio-sfsroot.conf"
+sfsroot_image="/boot/initramfs-sfsroot.img"

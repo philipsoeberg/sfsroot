@@ -1,0 +1,9 @@
+/kodi/.kodi/addons/packages/
+/kodi/.kodi/addons/temp/
+/kodi/.kodi/temp/
+/kodi/.kodi/userdata/Thumbnails/
+/kodi/.local/
+/kodi/.cache/
+/root/.cache/
+/var/cache/
+/mnt/

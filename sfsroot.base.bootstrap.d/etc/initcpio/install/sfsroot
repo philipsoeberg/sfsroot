@@ -1,0 +1,23 @@
+#!/bin/bash
+
+build() {
+  add_module loop
+  add_module squashfs
+  add_module overlay
+  add_binary "/usr/lib/initcpio/ipconfig" "/bin/ipconfig"       #<-- From package mkinitcpio-nfs-utils
+  #add_symlink /bin/udhcpc busybox
+  add_binary curl
+  #add_symlink /usr/bin/wget busybox
+  add_binary rsync
+
+  add_file /etc/initcpio/sfsroot_shutdown /shutdown 0744
+  add_file /etc/initcpio/sfsroot_shutdown.rsync.exclude /sfsroot_shutdown.rsync.exclude
+  add_binary cp
+
+  add_runscript
+}
+
+help() {
+  echo "Help text"
+}
+
