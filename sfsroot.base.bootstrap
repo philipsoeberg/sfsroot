@@ -20,7 +20,7 @@ fi
 
 msg "Bootstrapping sfsroot.base.."
 mkdir sfsroot.base
-pacstrap -c sfsroot.base base linux linux-firmware dhcpcd mkinitcpio-nfs-utils openssh vim rsync curl wget smbclient kodi polkit xf86-video-intel mesa-libgl libva-intel-driver libva mesa xorg-xinit xorg-server  xf86-video-vmware kodi unrar unzip libcec openresolv upower udisks2 sudo
+pacstrap -c sfsroot.base base linux linux-firmware dhcpcd mkinitcpio-nfs-utils openssh vim rsync curl wget smbclient kodi-x11 polkit xf86-video-intel mesa-libgl libva-intel-driver libva mesa xorg-xinit xorg-server  xf86-video-vmware unrar unzip libcec openresolv upower udisks2 sudo
 rm sfsroot.base/boot/*.img 
 
 # Configure and enable default services
