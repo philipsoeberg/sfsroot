@@ -44,13 +44,13 @@ if (( _opt_ipxe )); then
 fi
 
 if (( _opt_boot )); then
-  echo "Copy over kernel+initramfs"
+  echo "Building kernel+initramfs"
   ./sfsroot.change.mount
   set -m
   arch-chroot sfsroot.mount mkinitcpio -p sfsroot
   wait
-  cp -f sfsroot.mount/boot/vmlinuz-linux $HTTP_DESTDIR/sfsroot-vmlinuz
-  cp -f sfsroot.mount/boot/initramfs-sfsroot.img $HTTP_DESTDIR/sfsroot-initramfs
+  cp -f sfsroot.mount/boot/vmlinuz-linux $HTTP_DESTDIR/sfsroot-vmlinuz.new
+  cp -f sfsroot.mount/boot/initramfs-sfsroot.img $HTTP_DESTDIR/sfsroot-initramfs.new
   ./sfsroot.change.umount
   echo "Done"
 fi
@@ -64,10 +64,24 @@ fi
 if (( _opt_sfs )); then
   echo "building squashfs"
   ./sfsroot.change.mount
-  [ -f $HTTP_DESTDIR/sfsroot.sfs ] && echo "Backing up sfsroot.sfs -> .bak" && mv $HTTP_DESTDIR/sfsroot.sfs $HTTP_DESTDIR/sfsroot.sfs.bak
   #mksquashfs sfsroot.mount/ $HTTP_DESTDIR/sfsroot.sfs -noappend -no-exports -progress -e boot -e var/cache
-  mksquashfs sfsroot.mount/ $HTTP_DESTDIR/sfsroot.sfs -comp lz4 -Xhc -noappend -no-exports -progress -e boot -e var/cache
+  mksquashfs sfsroot.mount/ $HTTP_DESTDIR/sfsroot.sfs.new -comp lz4 -Xhc -noappend -no-exports -progress -e boot -e var/cache
   ./sfsroot.change.umount
   echo "Done"
+fi
+
+#Move new files into place
+NOW=$(date +%s)
+if (( _opt_boot && _opt_sfs )); then
+  echo "Backup old files and moving ind new"
+  [ -f $HTTP_DESTDIR/sfsroot-vmlinuz ] && echo "Backing up sfsroot-vmlinuz -> sfsroot-vmlinuz.$NOW.bak" && mv $HTTP_DESTDIR/sfsroot-vmlinuz $HTTP_DESTDIR/sfsroot-vmlinuz.$NOW.bak
+  mv $HTTP_DESTDIR/sfsroot-vmlinuz.new $HTTP_DESTDIR/sfsroot-vmlinuz
+  [ -f $HTTP_DESTDIR/sfsroot-initramfs ] && echo "Backing up sfsroot-initramfs -> sfsroot-initramfs.$NOW.bak" && mv $HTTP_DESTDIR/sfsroot-initramfs $HTTP_DESTDIR/sfsroot-initramfs.$NOW.bak
+  mv $HTTP_DESTDIR/sfsroot-initramfs.new $HTTP_DESTDIR/sfsroot-initramfs
+  [ -f $HTTP_DESTDIR/sfsroot.sfs ] && echo "Backing up sfsroot.sfs -> sfsroot.sfs.$NOW.bak" && mv $HTTP_DESTDIR/sfsroot.sfs $HTTP_DESTDIR/sfsroot.sfs.$NOW.bak
+  mv $HTTP_DESTDIR/sfsroot.sfs.new $HTTP_DESTDIR/sfsroot.sfs
+  echo "Done"
+else
+  echo "New files are in .new. I only backup and move old files if both boot and sfs option is 1"
 fi
 

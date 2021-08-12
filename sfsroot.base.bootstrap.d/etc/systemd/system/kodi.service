@@ -13,6 +13,7 @@ ExecStart = /usr/bin/xinit /usr/bin/dbus-launch --exit-with-session /usr/bin/kod
 Restart = always
 RestartSec = 1s
 StandardInput = tty
+Nice=10
 
 [Install]
 WantedBy = multi-user.target

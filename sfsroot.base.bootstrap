@@ -20,7 +20,7 @@ fi
 
 msg "Bootstrapping sfsroot.base.."
 mkdir sfsroot.base
-pacstrap -c sfsroot.base base linux linux-firmware dhcpcd mkinitcpio-nfs-utils openssh vim rsync curl wget smbclient kodi-x11 polkit xf86-video-intel mesa-libgl libva-intel-driver libva mesa xorg-xinit xorg-server  xf86-video-vmware unrar unzip libcec openresolv upower udisks2 sudo
+pacstrap -c sfsroot.base base linux dhcpcd mkinitcpio-nfs-utils openssh vim rsync curl wget smbclient kodi-x11 polkit xf86-video-intel mesa-libgl libva-intel-driver libva mesa xorg-xinit xorg-server  xf86-video-vmware unrar unzip libcec openresolv upower udisks2 sudo
 rm sfsroot.base/boot/*.img 
 
 # Configure and enable default services
@@ -65,10 +65,12 @@ arch-chroot sfsroot.mount/ /bin/bash -e <<-EOF
 
 	echo ":: Enabling kodi service"
 	systemctl enable kodi
-	pacman --noconfirm -U /kodi-addon-vfs-rar*
-        rm /kodi-addon-vfs-rar*
+	pacman --noconfirm -U /kodi-addon-vfs-rar-*.tar
+        rm /kodi-addon-vfs-rar-*.tar
 
         echo ":: Enabling D2 LED service"
+        pacman --noconfirm -U /libgpiod-*.tar
+        rm //libgpiod-*.tar
         systemctl enable d2-led
 
 	echo ":: Done. Leaving chroot"

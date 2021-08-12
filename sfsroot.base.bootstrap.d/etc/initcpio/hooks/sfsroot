@@ -31,7 +31,7 @@ run_hook() {
   msg "SFSROOT: mkdir sfsroot"
   run_or_reboot mkdir $dir_sfsroot
   msg "SFSROOT: Mount tmpfs as /sfsroot"
-  run_or_reboot mount -w -t tmpfs tmpfs -o size=60% $dir_sfsroot
+  run_or_reboot mount -w -t tmpfs tmpfs -o size=55% $dir_sfsroot
   msg "SFSROOT: mkdir sfsroot/{base,sync,work,mount}"
   run_or_reboot mkdir -p $dir_base $dir_sync $dir_work
   msg "SFSROOT: Fetching http://${sfsserver}/sfsroot.sfs to /sfsroot/sfsroot.sfs"
