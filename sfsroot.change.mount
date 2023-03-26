@@ -2,4 +2,4 @@
 [ -d "sfsroot.work" ] && echo "sfsroot.work exist. Please umount first" && exit 1
 mountpoint -q sfsroot.mount && exit 0
 mkdir -p sfsroot.{base,change,work,mount}
-mount -t overlay overlay -o rw,noatime,lowerdir=sfsroot.base,upperdir=sfsroot.change,workdir=sfsroot.work sfsroot.mount
+mount -t overlay overlay -o rw,noatime,index=off,metacopy=off,lowerdir=sfsroot.base,upperdir=sfsroot.change,workdir=sfsroot.work sfsroot.mount

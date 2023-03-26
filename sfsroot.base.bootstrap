@@ -65,12 +65,12 @@ arch-chroot sfsroot.mount/ /bin/bash -e <<-EOF
 
 	echo ":: Enabling kodi service"
 	systemctl enable kodi
-	pacman --noconfirm -U /kodi-addon-vfs-rar-*.tar
-        rm /kodi-addon-vfs-rar-*.tar
+	pacman --noconfirm -U /kodi-addon-*
+        rm /kodi-addon-*
 
         echo ":: Enabling D2 LED service"
         pacman --noconfirm -U /libgpiod-*.tar
-        rm //libgpiod-*.tar
+        rm /libgpiod-*.tar
         systemctl enable d2-led
 
 	echo ":: Done. Leaving chroot"

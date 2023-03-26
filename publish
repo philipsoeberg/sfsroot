@@ -50,7 +50,9 @@ if (( _opt_boot )); then
   arch-chroot sfsroot.mount mkinitcpio -p sfsroot
   wait
   cp -f sfsroot.mount/boot/vmlinuz-linux $HTTP_DESTDIR/sfsroot-vmlinuz.new
+  chmod 644 $HTTP_DESTDIR/sfsroot-vmlinuz.new
   cp -f sfsroot.mount/boot/initramfs-sfsroot.img $HTTP_DESTDIR/sfsroot-initramfs.new
+  chmod 644 $HTTP_DESTDIR/sfsroot-initramfs.new
   ./sfsroot.change.umount
   echo "Done"
 fi

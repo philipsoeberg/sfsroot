@@ -3,3 +3,5 @@ sfsroot.change
 sfsroot.base
 local
 sfsroot.base.bootstrap.d/kodi/.kodi/userdata/playlists/
+sfsroot.base.old/
+temp/
