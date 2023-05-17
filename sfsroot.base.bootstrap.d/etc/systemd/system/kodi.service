@@ -9,6 +9,8 @@ Group = kodi
 PAMName=login
 Type = simple
 TTYPath=/dev/tty7
+# Sleeping 5 seconds seem to help 1920x1080 resolution
+ExecStartPre = /bin/sleep 5
 ExecStart = /usr/bin/xinit /usr/bin/dbus-launch --exit-with-session /usr/bin/kodi-standalone -- :0 -nolisten tcp vt7
 Restart = always
 RestartSec = 1s
